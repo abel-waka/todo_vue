@@ -43,7 +43,7 @@ const deleteTask = (id) => {
   tasks.value = tasks.value.filter(task => task.id !== id)
 }
 
-const updateTask = (task) => {
+const updateTask = (task) => {orderTasks()
   const index = tasks.value.findIndex(t => t.id === task.id)
   tasks.value[index] = task
   console.log(tasks.value)
@@ -53,6 +53,21 @@ const toggleEditMode = () => {
   isEditMode.value = !isEditMode.value
 }
 
+// Tasks done at the end:
+const orderTasks = () => {
+  tasks.value.sort((a, b) => {
+    if(a.isDone && !b.isDone) {
+      return 1
+    }
+    if(!a.isDone && b.isDone) {
+      return -1
+    }
+    return 0
+  })
+}
+
+
+// DRAG
 const handleDragStart = (index) => {
   draggedItem.value = index
 }
@@ -66,7 +81,6 @@ const handleDrop = (index) => {
   tasks.value.splice(index, 0 , droppedItem)
   draggedItem.value = null
   console.log(index)
-
 }
 	
 </script>

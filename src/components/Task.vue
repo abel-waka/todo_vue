@@ -59,10 +59,10 @@ const updateTask = () => {
 
     .task--done .task__left {
         opacity: 0.2;
-        position: relative;
     }
-
+    
     .task__left {
+        position: relative;
         flex: 1;
         display: flex;
         align-items: center;
