@@ -25,6 +25,8 @@ const tasks = ref([
 
 const isEditMode = ref(false)
 
+const draggedItem = ref(null);
+
 const addTask = (e) => {
   e.preventDefault();
   if(inputValue.value !== '') {
@@ -50,6 +52,22 @@ const updateTask = (task) => {
 const toggleEditMode = () => {
   isEditMode.value = !isEditMode.value
 }
+
+const handleDragStart = (index) => {
+  draggedItem.value = index
+}
+
+const handleDragOver = (event) => {
+  event.preventDefault();
+}
+
+const handleDrop = (index) => {
+  const droppedItem = tasks.value.splice(draggedItem.value, 1)[0]
+  tasks.value.splice(index, 0 , droppedItem)
+  draggedItem.value = null
+  console.log(index)
+
+}
 	
 </script>
 
@@ -69,14 +87,24 @@ const toggleEditMode = () => {
     <!-- BODY -->
     <div class="body">
       <ul v-if="tasks.length > 0">
-        <Task 
-          v-for="task in tasks" 
+        <li
+          v-for="(task, index) in tasks" 
           :key="task.id" 
-          :task="task" 
-          :isEditMode="isEditMode" 
-          @delete-task="deleteTask" 
-          @update-task="updateTask"
-        />
+          :draggable="true"
+          @dragstart="handleDragStart(index)"
+          @dragover="handleDragOver"
+          @drop="handleDrop(index)"
+          :class="{ 'dragged': index === draggedItem }"
+        >
+          <Task 
+            :task="task" 
+            :isEditMode="isEditMode" 
+            @delete-task="deleteTask" 
+            @update-task="updateTask"
+
+          />
+
+        </li>
       </ul>
       <h2 v-else>No hay tareas</h2>
     </div>
@@ -139,6 +167,10 @@ const toggleEditMode = () => {
   }
 
   .body ul {
+  }
+
+  .dragged {
+    background-color: #22222240;
   }
 
   footer {

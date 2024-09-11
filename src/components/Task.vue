@@ -18,7 +18,7 @@ const updateTask = () => {
 
 </script>
 <template>
-    <li class="task" :class="{ 'task--done': task.isDone }">
+    <div class="task" :class="{ 'task--done': task.isDone }">
         <!-- LEFT -->
         <div class="task__left">
             <input 
@@ -44,7 +44,7 @@ const updateTask = () => {
                 <Icon type="delete" color="var(--RED)"/>
             </button>
         </div>
-    </li>
+    </div>
 </template>
 
 <style>
@@ -59,6 +59,7 @@ const updateTask = () => {
 
     .task--done .task__left {
         opacity: 0.2;
+        position: relative;
     }
 
     .task__left {
