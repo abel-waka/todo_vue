@@ -1,0 +1,38 @@
+:root {
+  --GREEN: rgb(110, 190, 110);
+  --RED: rgb(255, 97, 97);
+
+  --HEADER-HEIGHT: 60px;
+  --FOOTER-HEIGHT: 60px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-weight: bold;
+  transition: all 400ms ease;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:active {
+  opacity: 1;
+  box-shadow: 0 0 2px 0 purple;
+}
+
+ul {
+  list-style: none;
+}
