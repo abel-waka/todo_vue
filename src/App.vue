@@ -66,6 +66,10 @@ const orderTasks = () => {
   })
 }
 
+const cleanTasks = () => {
+  tasks.value = tasks.value.filter(task => !task.isDone)
+}
+
 
 // DRAG
 const handleDragStart = (index) => {
@@ -80,7 +84,6 @@ const handleDrop = (index) => {
   const droppedItem = tasks.value.splice(draggedItem.value, 1)[0]
   tasks.value.splice(index, 0 , droppedItem)
   draggedItem.value = null
-  console.log(index)
 }
 	
 </script>
@@ -125,6 +128,8 @@ const handleDrop = (index) => {
     <!------------------------------------------------>
     <!-- FOOTER -->
     <footer>
+      <button v-if="isEditMode" class="btn_clean" @click="cleanTasks">Limpiar</button>
+
       <form @submit="addTask">
         <input type="text" v-model="inputValue" />
         <button  @click="addTask">Añadir</button>
@@ -180,15 +185,20 @@ const handleDrop = (index) => {
     padding: 10px 0;
   }
 
-  .body ul {
-  }
-
   .dragged {
     background-color: #22222240;
   }
 
   footer {
+    position: relative;
     width: 100%;
+  }
+
+  .btn_clean {
+    position: absolute;
+    bottom: 120%;
+    background: var(--RED);
+    color: white;
   }
   
   footer form {
