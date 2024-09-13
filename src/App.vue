@@ -103,7 +103,7 @@ const handleDrop = (index) => {
     <!------------------------------------------------>
     <!-- BODY -->
     <div class="body">
-      <ul v-if="tasks.length > 0">
+      <ul v-if="tasks?.length > 0">
         <li
           v-for="(task, index) in tasks" 
           :key="task.id" 
