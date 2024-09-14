@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^10.13.1",
     "vue": "^3.4.37",
     "vue-rough-notation": "^1.0.4"
   },

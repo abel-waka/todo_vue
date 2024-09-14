@@ -2,72 +2,73 @@
 import Task from './components/Task.vue';
 import Icon from './components/Icon.vue';
 import { ref } from 'vue'
+import { db } from './firebaseConfig';
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 const inputValue = ref('')
 
-const tasks = ref([
-  {
-    id: 1,
-    text: "Task 1",
-    isDone: false
-  },
-  {
-    id: 2,
-    text: "Task 2",
-    isDone: true
-  },
-  {
-    id: 3,
-    text: "Task 3",
-    isDone: false
-  }
-])
+const tasks = ref([]);        // [ { id, text, isDone } ]
 
 const isEditMode = ref(false)
 
 const draggedItem = ref(null);
 
-const addTask = (e) => {
-  e.preventDefault();
+const isShowDoneTasks = ref(false);
+
+const fetchTasks = async () => {
+  const querySnapshot = await getDocs(collection(db, 'tasks'));
+  tasks.value = querySnapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      // Order isDone last:
+      .sort((a, b) => {
+      if(a.isDone && !b.isDone) {
+          return 1
+        }
+        if(!a.isDone && b.isDone) {
+          return -1
+        }
+        return 0
+      })
+}
+// __INIT
+fetchTasks();
+
+const addTask = async (e) => {
+  console.log('_____________addTask')
   if(inputValue.value !== '') {
-    tasks.value.push({
-      id: new Date(),
+    const newTask = {
       text: inputValue.value,
       isDone: false
-    })
-    inputValue.value = ''
+    }
+    await addDoc(collection(db, 'tasks'), newTask);
+    
+    inputValue.value = '';
+    await fetchTasks();
   }
 }
 
-const deleteTask = (id) => {
-  tasks.value = tasks.value.filter(task => task.id !== id)
+const deleteTask = async (id) => {
+  await deleteDoc(doc(db, 'tasks', id));
+  await fetchTasks();
 }
 
-const updateTask = (task) => {orderTasks()
-  const index = tasks.value.findIndex(t => t.id === task.id)
-  tasks.value[index] = task
-  console.log(tasks.value)
+const updateTask = async (task) => {
+  console.log('______update', task)
+  await updateDoc(doc(db, 'tasks', task.id), task);
+  await fetchTasks();
 }
 
 const toggleEditMode = () => {
   isEditMode.value = !isEditMode.value
 }
 
-// Tasks done at the end:
-const orderTasks = () => {
-  tasks.value.sort((a, b) => {
-    if(a.isDone && !b.isDone) {
-      return 1
-    }
-    if(!a.isDone && b.isDone) {
-      return -1
-    }
-    return 0
-  })
-}
-
-const cleanTasks = () => {
-  tasks.value = tasks.value.filter(task => !task.isDone)
+const toggleShowDoneTasks = () => {
+  isShowDoneTasks.value = !isShowDoneTasks.value;
+  if (isShowDoneTasks.value) {
+    fetchTasks();
+  } else {
+    tasks.value = tasks.value.filter(task => !task.isDone)
+  }
 }
 
 
@@ -128,11 +129,13 @@ const handleDrop = (index) => {
     <!------------------------------------------------>
     <!-- FOOTER -->
     <footer>
-      <button v-if="isEditMode" class="btn_clean" @click="cleanTasks">Limpiar</button>
+      <button v-if="isEditMode" class="btn_clean" @click="toggleShowDoneTasks">
+        {{ isShowDoneTasks ? 'Ocultar' : 'Mostrar' }} tareas completadas
+      </button>
 
-      <form @submit="addTask">
+      <form @submit.prevent="addTask">
         <input type="text" v-model="inputValue" />
-        <button  @click="addTask">Añadir</button>
+        <button type="submit">Añadir</button>
       </form>
     </footer>
   </main>

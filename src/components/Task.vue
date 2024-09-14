@@ -6,14 +6,17 @@ const { task, isEditMode } = defineProps({
     isEditMode: Boolean
 });
 
-const emit = defineEmits(['delete-task', 'update-task'])
+const emit = defineEmits(['delete-task', 'update-task']);
 
 const deleteTask = () => {
-    emit('delete-task', task.id)
+    emit('delete-task', task.id);
 }
 
-const updateTask = () => {
-    emit('update-task', task)
+const updateTask = (type) => {
+    if (type === 'checkbox') {
+        task.isDone = !task.isDone;
+    }
+    emit('update-task', task);
 }
 
 </script>
@@ -24,8 +27,8 @@ const updateTask = () => {
             <input 
                 type="checkbox" 
                 class="task__checkbox"
-                v-model="task.isDone" 
-                @change="updateTask"
+                @change="updateTask('checkbox')"
+                :checked="task.isDone"
             />
             
             <RoughNotation :is-show="task.isDone" type="strike-through" color="red">
@@ -34,7 +37,7 @@ const updateTask = () => {
                     class="task__input" 
                     v-model="task.text" 
                     :disabled="!isEditMode" 
-                    @blur="updateTask"
+                    @blur="updateTask('input')"
                 />
             </RoughNotation>
         </div>
