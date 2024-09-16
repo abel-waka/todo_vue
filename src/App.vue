@@ -13,7 +13,7 @@ const isEditMode = ref(false)
 
 const draggedItem = ref(null);
 
-const isShowDoneTasks = ref(false);
+const isShowDoneTasks = ref(true);
 
 const fetchTasks = async () => {
   const querySnapshot = await getDocs(collection(db, 'tasks'));
@@ -34,7 +34,6 @@ const fetchTasks = async () => {
 fetchTasks();
 
 const addTask = async (e) => {
-  console.log('_____________addTask')
   if(inputValue.value !== '') {
     const newTask = {
       text: inputValue.value,
@@ -53,7 +52,6 @@ const deleteTask = async (id) => {
 }
 
 const updateTask = async (task) => {
-  console.log('______update', task)
   await updateDoc(doc(db, 'tasks', task.id), task);
   await fetchTasks();
 }
@@ -69,6 +67,16 @@ const toggleShowDoneTasks = () => {
   } else {
     tasks.value = tasks.value.filter(task => !task.isDone)
   }
+}
+
+const deleteDoneTasks = async () => {
+  await fetchTasks();
+  const doneTasks = tasks.value.filter(task => task.isDone);
+  doneTasks.forEach(async (task) => {
+    await deleteDoc(doc(db, 'tasks', task.id));
+  });
+  isShowDoneTasks.value = true;
+  await fetchTasks();
 }
 
 
@@ -129,9 +137,17 @@ const handleDrop = (index) => {
     <!------------------------------------------------>
     <!-- FOOTER -->
     <footer>
-      <button v-if="isEditMode" class="btn_clean" @click="toggleShowDoneTasks">
-        {{ isShowDoneTasks ? 'Ocultar' : 'Mostrar' }} tareas completadas
-      </button>
+      <div class="buttons_done">
+        <button v-if="isEditMode" class="btn_hidde_done" @click="toggleShowDoneTasks">
+          <Icon v-if="!isShowDoneTasks" type="eye" color="white"/>
+          <Icon v-else type="no-eye" color="white"/>
+          <span>Completadas</span>
+        </button>
+        <button v-if="isEditMode" class="btn_delete_done" @click="deleteDoneTasks">
+          <Icon type="delete" color="white"/>
+          <span>Completadas</span>
+        </button>
+      </div>
 
       <form @submit.prevent="addTask">
         <input type="text" v-model="inputValue" />
@@ -197,12 +213,23 @@ const handleDrop = (index) => {
     width: 100%;
   }
 
-  .btn_clean {
+  .buttons_done {
     position: absolute;
     bottom: 120%;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .btn_hidde_done,
+  .btn_delete_done {
     background: var(--RED);
     color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
   }
+
   
   footer form {
     height: var(--HEADER-HEIGHT);
