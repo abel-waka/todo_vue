@@ -9,6 +9,8 @@ const inputValue = ref('')
 
 const tasks = ref([]);        // [ { id, text, isDone } ]
 
+const tasksNoFilter = ref([]);
+
 const isEditMode = ref(false)
 
 const draggedItem = ref(null);
@@ -29,7 +31,9 @@ const fetchTasks = async () => {
         }
         return 0
       })
+  tasksNoFilter.value = tasks.value;
 }
+
 // __INIT
 fetchTasks();
 
@@ -48,12 +52,15 @@ const addTask = async (e) => {
 
 const deleteTask = async (id) => {
   await deleteDoc(doc(db, 'tasks', id));
-  await fetchTasks();
+  tasks.value = tasks.value.filter(task => task.id !== id);
+  // await fetchTasks();
 }
 
 const updateTask = async (task) => {
   await updateDoc(doc(db, 'tasks', task.id), task);
-  await fetchTasks();
+  const index = tasks.value.findIndex(t => t.id === task.id)
+  tasks.value[index] = task;
+  // await fetchTasks();
 }
 
 const toggleEditMode = () => {
@@ -63,19 +70,22 @@ const toggleEditMode = () => {
 const toggleShowDoneTasks = () => {
   isShowDoneTasks.value = !isShowDoneTasks.value;
   if (isShowDoneTasks.value) {
-    fetchTasks();
+    tasks.value = tasksNoFilter.value;
+    // fetchTasks();
   } else {
     tasks.value = tasks.value.filter(task => !task.isDone)
   }
 }
 
 const deleteDoneTasks = async () => {
-  await fetchTasks();
-  const doneTasks = tasks.value.filter(task => task.isDone);
+  // await fetchTasks();
+  const doneTasks = tasksNoFilter.value.filter(task => task.isDone);
   doneTasks.forEach(async (task) => {
     await deleteDoc(doc(db, 'tasks', task.id));
   });
   isShowDoneTasks.value = true;
+
+  // TODO: Eliminar tareas sin llamada?:
   await fetchTasks();
 }
 
