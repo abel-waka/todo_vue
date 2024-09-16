@@ -57,6 +57,7 @@ const deleteTask = async (id) => {
 }
 
 const updateTask = async (task) => {
+  console.log('_____________',task)
   await updateDoc(doc(db, 'tasks', task.id), task);
   const index = tasks.value.findIndex(t => t.id === task.id)
   tasks.value[index] = task;
@@ -225,10 +226,12 @@ const handleDrop = (index) => {
 
   .buttons_done {
     position: absolute;
-    bottom: 120%;
+    bottom: 100%;
     display: flex;
     justify-content: space-between;
     width: 100%;
+    background: var(--WHITE);
+    padding-bottom: 10px;
   }
   .btn_hidde_done,
   .btn_delete_done {

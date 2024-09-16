@@ -1,7 +1,8 @@
 :root {
   --GREEN: rgb(110, 190, 110);
   --RED: rgb(255, 97, 97);
-
+  --ORANGE: orange;
+  
   --HEADER-HEIGHT: 60px;
   --FOOTER-HEIGHT: 60px;
 }
