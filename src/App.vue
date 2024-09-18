@@ -1,7 +1,8 @@
 <script setup>
 import Task from './components/Task.vue';
 import Icon from './components/Icon.vue';
-import { ref } from 'vue'
+import Modal from './components/Modal.vue';
+import { ref, reactive } from 'vue'
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
@@ -16,6 +17,13 @@ const isEditMode = ref(false)
 const draggedItem = ref(null);
 
 const isShowDoneTasks = ref(true);
+
+let modalConfig = reactive({
+  isVisible: false,
+  title: 'Modal',
+  type: 'Delete',
+  onConfirm: () => console.log('CONFIRMADA')
+});
 
 const fetchTasks = async () => {
   const querySnapshot = await getDocs(collection(db, 'tasks'));
@@ -50,6 +58,22 @@ const addTask = async (e) => {
   }
 }
 
+const openDeleteModal = (id) => {
+  modalConfig.isVisible = true
+  modalConfig.title = 'Eliminar tarea'
+  modalConfig.type = 'delete'
+  modalConfig.onConfirm = () => deleteTask(id)
+}
+
+const openPriorityModal = (task) => {
+  modalConfig.isVisible = true
+  modalConfig.title = 'Prioridad'
+  modalConfig.type = 'priority'
+  modalConfig.task = task
+}
+
+
+
 const deleteTask = async (id) => {
   await deleteDoc(doc(db, 'tasks', id));
   tasks.value = tasks.value.filter(task => task.id !== id);
@@ -57,7 +81,6 @@ const deleteTask = async (id) => {
 }
 
 const updateTask = async (task) => {
-  console.log('_____________',task)
   await updateDoc(doc(db, 'tasks', task.id), task);
   const index = tasks.value.findIndex(t => t.id === task.id)
   tasks.value[index] = task;
@@ -110,6 +133,15 @@ const handleDrop = (index) => {
 
 <template>
   <main>
+    <Modal 
+      v-if="modalConfig.isVisible" 
+      :type="modalConfig.type"
+      :title="modalConfig.title"
+      :task="modalConfig.task"
+      :onConfirm="modalConfig.onConfirm"
+      @close="modalConfig.isVisible = false"
+      @update-priority="updateTask"
+    />
     <!------------------------------------------------>
     <!-- HEADER -->
     <header>
@@ -136,9 +168,9 @@ const handleDrop = (index) => {
           <Task 
             :task="task" 
             :isEditMode="isEditMode" 
-            @delete-task="deleteTask" 
+            @delete-task="openDeleteModal" 
             @update-task="updateTask"
-
+            @update-priority="openPriorityModal"
           />
 
         </li>

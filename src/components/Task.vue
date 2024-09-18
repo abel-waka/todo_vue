@@ -7,42 +7,21 @@ const { task, isEditMode } = defineProps({
     isEditMode: Boolean
 });
 
-const isTooltipOpen = ref(false);
-const prioritySelected = ref(task.priority ? task.priority : 0)
 
-const PRIORITIES = [
-    {
-        number: 0,
-        label: 'P.1'
-    },
-    {
-        number: 1,
-        label: 'P.2'
-    },
-    {
-        number: 2,
-        label: 'P.3'
-    }
-]
-
-const emit = defineEmits(['delete-task', 'update-task']);
+const emit = defineEmits(['delete-task', 'update-task', 'update-priority']);
 
 const deleteTask = () => {
     emit('delete-task', task.id);
 }
 
+const updatePriority = () => {
+    emit('update-priority', task);
+}
+
 const updateTask = (type) => {
     if (type === 'checkbox') task.isDone = !task.isDone;
     
-    if (type === 'priority') task.priority = prioritySelected.value;
-
     emit('update-task', task);
-}
-
-const updatePriority  = (value) => {
-    prioritySelected.value = value;
-    updateTask('priority');
-    console.log('PRIORIRY: ', value)
 }
 
 </script>
@@ -70,18 +49,8 @@ const updatePriority  = (value) => {
         </div>
         <!-- RIGHT -->
         <div v-if="isEditMode" class="task__right">
-            <button class="btn-edit" @click="isTooltipOpen = !isTooltipOpen">
+            <button class="btn-edit" @click="updatePriority">
                 <Icon type="flag" color="var(--GREEN)"/>
-                <div v-if="isTooltipOpen" class="btn__tooltip">
-                    <button 
-                        v-for="priority in PRIORITIES" 
-                        :key="priority.number" 
-                        @click="updatePriority(priority.number)"
-                        :class="{ 'p-1': priority.number === 0, 'p-2': priority.number === 1, 'p-3': priority.number === 2 }"
-                    >
-                        {{ priority.label }}
-                    </button>
-                </div>
             </button>
             <button class="btn-edit" @click="deleteTask">
                 <Icon type="delete" color="var(--RED)"/>
@@ -166,8 +135,6 @@ const updatePriority  = (value) => {
     }
 
     .btn-edit {
-        position: relative;
-        z-index: 0;
         background: transparent;
         padding: 4px;
     }
@@ -176,18 +143,4 @@ const updatePriority  = (value) => {
         box-shadow: none;
         filter: drop-shadow(0 0 2px rgba(0,0,0,0.2));
     }
-
-    .btn__tooltip {
-        position: absolute;
-        z-index: 10;
-        top: 85%;
-    }
-
-    .p-1 {
-        color: var(--RED);
-    }
-    .p-2 {
-        color: var(--ORANGE);
-    }
-
 </style>

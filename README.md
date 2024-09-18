@@ -6,10 +6,11 @@ Link: https://console.firebase.google.com/project/tasks-bab33
 const task: {
     id,
     text: String,
-    isDone: Boolean
+    isDone: Boolean,
+    priority: Number
 }
 ``` 
 
 ---
 # TO DO
-- [ ] FIX: Priority button propagation between tasks.
+- [ ] FEAT: Crear función para reordenar por prioridad
