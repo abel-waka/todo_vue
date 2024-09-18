@@ -92,7 +92,7 @@ const handleUpdatePriority = (p) => {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.8);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -140,19 +140,27 @@ const handleUpdatePriority = (p) => {
         justify-content: center;
         gap: 20px;
     }
-
+    
     .btn__confirm {
+        font-size: 20px;
         flex: 1;
         background: var(--GREEN);
         color: var(--WHITE);
     }
 
     .btn__cancel {
+        font-size: 20px;
         flex: 1;
         background: var(--RED);
         color: var(--WHITE);
     }
 
+    .p-1,
+    .p-2,
+    .p-3 {
+        font-size: 20px;
+    }
+    
     .p-1 {
         background: var(--RED);
         color: var(--WHITE);

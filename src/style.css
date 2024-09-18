@@ -4,6 +4,7 @@
   --ORANGE: orange;
   --WHITE: #fff;
   --BLACK: #222222;
+  --ACCENT: var(--ORANGE);
   
   --HEADER-HEIGHT: 60px;
   --FOOTER-HEIGHT: 60px;

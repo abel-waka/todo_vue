@@ -13,4 +13,6 @@ const task: {
 
 ---
 # TO DO
-- [ ] FEAT: Crear función para reordenar por prioridad
+- [ ] Boton to más grande
+- [ ] input más destacable borde, boton, icono boton
+- [ ] Modal overlay más oscura + botones más grandes + fuente

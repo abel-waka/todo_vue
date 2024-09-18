@@ -180,7 +180,9 @@ const sortTasks = () => {
 
       <form @submit.prevent="addTask">
         <input type="text" v-model="inputValue" />
-        <button type="submit">Añadir</button>
+        <button type="submit">
+          <Icon type="arrow-top" color="var(--WHITE)" />
+        </button>
       </form>
     </footer>
   </main>
@@ -222,7 +224,6 @@ const sortTasks = () => {
     padding: 6px 8px;
     border-radius: 50%;
     opacity: 0.6;
-    scale: 0.8;
   }
 
   .body {
@@ -263,10 +264,17 @@ const sortTasks = () => {
     display: flex;
   }
 
+  form button {
+    background: var(--ACCENT);
+    border-radius: 0 10px 10px 0;
+    width: 60px;
+  }
+
   footer input {
     flex: 1px;
     padding: 10px;
     font-size: 20px;
-    border: 1px solid #22222220;
+    border: 2px solid #22222220;
+    border-radius: 10px 0 0 10px;
   }
 </style>
