@@ -16,3 +16,11 @@ const task: {
 - [ ] Boton to más grande
 - [ ] input más destacable borde, boton, icono boton
 - [ ] Modal overlay más oscura + botones más grandes + fuente
+
+---
+# DEPLOY
+1. Eliminar rama gh-pages en github
+2. npm run build
+3. git add dist -f
+4. git commit -m [your commit message here]
+5. git subtree push --prefix dist origin gh-pages
