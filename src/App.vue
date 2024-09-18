@@ -8,7 +8,7 @@ import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase
 
 const inputValue = ref('')
 
-const tasks = ref([]);        // [ { id, text, isDone } ]
+const tasks = ref([]);        // [ { id, text, isDone, priority } ]
 
 const tasksNoFilter = ref([]);
 
@@ -27,18 +27,8 @@ let modalConfig = reactive({
 
 const fetchTasks = async () => {
   const querySnapshot = await getDocs(collection(db, 'tasks'));
-  tasks.value = querySnapshot.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() }))
-      // Order isDone last:
-      .sort((a, b) => {
-      if(a.isDone && !b.isDone) {
-          return 1
-        }
-        if(!a.isDone && b.isDone) {
-          return -1
-        }
-        return 0
-      })
+  tasks.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  sortTasks();
   tasksNoFilter.value = tasks.value;
 }
 
@@ -84,6 +74,7 @@ const updateTask = async (task) => {
   await updateDoc(doc(db, 'tasks', task.id), task);
   const index = tasks.value.findIndex(t => t.id === task.id)
   tasks.value[index] = task;
+  sortTasks();
   // await fetchTasks();
 }
 
@@ -113,20 +104,20 @@ const deleteDoneTasks = async () => {
   await fetchTasks();
 }
 
-
-// DRAG
-const handleDragStart = (index) => {
-  draggedItem.value = index
-}
-
-const handleDragOver = (event) => {
-  event.preventDefault();
-}
-
-const handleDrop = (index) => {
-  const droppedItem = tasks.value.splice(draggedItem.value, 1)[0]
-  tasks.value.splice(index, 0 , droppedItem)
-  draggedItem.value = null
+// 1) isDone | 2) Priority 0 > 1
+const sortTasks = () => {
+  return tasks.value.sort((a, b) => {
+    // Primero, ordenamos por isDone: false (las que no están hechas van primero)
+    if (a.isDone !== b.isDone) {
+      return a.isDone - b.isDone;
+    }
+    // Si ambas tareas no están hechas, las ordenamos por prioridad
+    if (!a.isDone) {
+      return a.priority - b.priority;
+    }
+    // Si ambas están hechas, las dejamos en el mismo orden relativo
+    return 0;
+  });
 }
 	
 </script>
@@ -157,13 +148,8 @@ const handleDrop = (index) => {
     <div class="body">
       <ul v-if="tasks?.length > 0">
         <li
-          v-for="(task, index) in tasks" 
+          v-for="task in tasks" 
           :key="task.id" 
-          :draggable="true"
-          @dragstart="handleDragStart(index)"
-          @dragover="handleDragOver"
-          @drop="handleDrop(index)"
-          :class="{ 'dragged': index === draggedItem }"
         >
           <Task 
             :task="task" 
@@ -245,10 +231,6 @@ const handleDrop = (index) => {
     overflow-x: hidden;
     width: 100%;
     padding: 10px 0;
-  }
-
-  .dragged {
-    background-color: #22222240;
   }
 
   footer {
