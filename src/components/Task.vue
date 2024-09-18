@@ -38,13 +38,13 @@ const updateTask = (type) => {
             />
             
             <RoughNotation :is-show="task.isDone" type="strike-through" color="red">
-                <input 
-                    type="text" 
+                <textarea 
                     class="task__input" 
                     v-model="task.text" 
                     :disabled="!isEditMode" 
                     @blur="updateTask('input')"
-                />
+                    rows="1"    
+                ></textarea>
             </RoughNotation>
         </div>
         <!-- RIGHT -->
@@ -62,7 +62,6 @@ const updateTask = (type) => {
 <style>
     .task {
         display: flex;
-        gap: 8px;
         box-shadow: 0 0 10px 0 #22222210;
         border-radius: 4px;
         margin-bottom: 10px;
@@ -122,11 +121,23 @@ const updateTask = (type) => {
     }
 
     .task__input {
-        height: 100%;
+        line-height: 26px;
+        min-height: 26px;
+        max-height: 200px;
+        overflow-y: auto;
         border: none;
         outline: none;
         background: transparent;
         font-size: 20px;
+        resize: none;
+    }
+    
+    .task__input:not(:disabled) {
+        border-bottom: 1px dashed #22222220;
+    }
+
+    .task__input:disabled {
+        color: var(--BLACK);
     }
 
     .task__right {
